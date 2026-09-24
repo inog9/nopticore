@@ -1,0 +1,10 @@
+Package: com.ptxyz.nopticored
+Name: Nopticore (iOS)
+Version: 0.1.0
+Architecture: iphoneos-arm64
+Description: Posture collector daemon untuk device jailbreak, forward data ke Wazuh via Flask receiver.
+Maintainer: Guntur Wahyu Ramadhan
+Author: Guntur Wahyu Ramadhan
+Section: Utilities
+Depends: firmware (>= 11.0)
+; TODO (Audit 13.7): konfirmasi versi iOS aktual di device sebelum finalisasi firmware minimum

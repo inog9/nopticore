@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- CATATAN (Audit 13.1): di jailbreak ROOTLESS (Dopamine/palera1n),
+     LaunchDaemons dan binary berada di bawah prefix /var/jb. Sesuaikan
+     path Program dan Std*Path (mis. /var/jb/usr/libexec/nopticored,
+     /var/jb/var/log/nopticored.log) sesuai tool jailbreak yang dipakai --
+     lihat open question di dokumen Section 12. Nilai di bawah ini untuk
+     layout rootful klasik. -->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.ptxyz.nopticored</string>
+	<key>Program</key>
+	<string>/usr/libexec/nopticored</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/libexec/nopticored</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>KeepAlive</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>/var/log/nopticored.log</string>
+	<key>StandardErrorPath</key>
+	<string>/var/log/nopticored.log</string>
+	<key>ThrottleInterval</key>
+	<integer>30</integer>
+</dict>
+</plist>
