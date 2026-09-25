@@ -1,0 +1,13 @@
+<!--
+  Ditambahkan ke /var/ossec/etc/ossec.conf di Wazuh manager.
+  Nopticore tidak memakai custom decoder -- log receiver sudah menulis
+  JSON per baris, jadi cukup pakai built-in JSON decoder Wazuh lewat
+  log_format json. Field JSON (source, finding_type, tier, dll) otomatis
+  ter-decode dan bisa langsung dipakai di <field name="..."> pada rules.
+-->
+<ossec_config>
+  <localfile>
+    <log_format>json</log_format>
+    <location>/var/log/nopticore/*.log</location>
+  </localfile>
+</ossec_config>

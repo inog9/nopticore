@@ -1,0 +1,137 @@
+<!--
+  Nopticore -- iOS jailbreak posture monitoring
+  Rule ID range: 101000-101099
+
+  ARSITEKTUR (v2): Flask receiver mengevaluasi kondisi di Python (numeric
+  comparison) lalu menulis SATU baris JSON kecil per temuan ("finding")
+  yang TRUE, terpisah dari record posture lengkap. Ini menghindari
+  keterbatasan "satu alert per log line" pada Wazuh -- kalau semua kondisi
+  dicek dalam SATU event besar, cuma rule pertama yang match yang pernah
+  dicoba (sibling lain tidak pernah dievaluasi). Dengan tiap temuan di
+  baris terpisah, semua kondisi yang true pada satu siklus sama-sama jadi
+  alert independen.
+
+  Catatan: field TIDAK memakai prefix "data." -- field diakses langsung
+  memakai nama key aslinya (source, finding_type, dst), sudah divalidasi
+  empiris di instance ini via `wazuh-logtest -v`.
+-->
+
+<group name="nopticore,ios,">
+
+  <!-- Base rule: posture LENGKAP (record penuh, untuk histori/Discover search) -->
+  <rule id="101000" level="3">
+    <field name="source">nopticore-ios</field>
+    <description>Nopticore: posture event diterima dari device $(device_model)</description>
+    <group>nopticore,</group>
+  </rule>
+
+  <rule id="101001" level="3">
+    <if_sid>101000</if_sid>
+    <field name="tier">full</field>
+    <description>Nopticore: posture (Full Tier) dari $(device_model)</description>
+  </rule>
+
+  <rule id="101002" level="3">
+    <if_sid>101000</if_sid>
+    <field name="tier">lite</field>
+    <description>Nopticore: posture (Lite Tier) dari $(device_model)</description>
+  </rule>
+
+  <!-- Base rule: FINDING (baris kecil per temuan, ini yang jadi alert utama) -->
+  <rule id="101030" level="3">
+    <field name="source">nopticore-finding</field>
+    <description>Nopticore finding: $(finding_type) di $(device_model)</description>
+    <group>nopticore,finding,</group>
+  </rule>
+
+  <rule id="101031" level="10">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">frida_installed</field>
+    <description>Nopticore: Frida server terinstal di $(device_model) -- $(detail)</description>
+    <mitre><id>T1622</id></mitre>
+    <group>nopticore,frida,</group>
+  </rule>
+
+  <rule id="101032" level="12">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">frida_persistent</field>
+    <description>Nopticore: Frida PERSISTEN di $(device_model) -- $(detail)</description>
+    <mitre><id>T1622</id><id>T1543</id></mitre>
+    <group>nopticore,frida,persistence,</group>
+  </rule>
+
+  <rule id="101033" level="12">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">frida_ssh_combo</field>
+    <description>Nopticore: KOMBINASI Frida + SSH di $(device_model) -- $(detail)</description>
+    <mitre><id>T1622</id><id>T1021.004</id></mitre>
+    <group>nopticore,frida,ssh,</group>
+  </rule>
+
+  <rule id="101034" level="8">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">sideload_tool</field>
+    <description>Nopticore: tool sideloading di $(device_model) -- $(detail)</description>
+    <mitre><id>T1444</id></mitre>
+    <group>nopticore,sideload,</group>
+  </rule>
+
+  <rule id="101035" level="10">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">debugger_running</field>
+    <description>Nopticore: tool debugger/instrumentasi jalan di $(device_model) -- $(detail)</description>
+    <mitre><id>T1622</id></mitre>
+    <group>nopticore,debugger,</group>
+  </rule>
+
+  <rule id="101036" level="10">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">suspicious_persistent_daemon</field>
+    <description>Nopticore: daemon persisten mencurigakan di $(device_model) -- $(detail)</description>
+    <mitre><id>T1543</id></mitre>
+    <group>nopticore,persistence,</group>
+  </rule>
+
+  <rule id="101037" level="6">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">ssh_open</field>
+    <description>Nopticore: SSH aktif di $(device_model) -- $(detail)</description>
+    <group>nopticore,ssh,</group>
+  </rule>
+
+  <rule id="101038" level="8">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">jailbreak_artifact_high</field>
+    <description>Nopticore: jailbreak_artifact_count tinggi di $(device_model) -- $(detail)</description>
+    <group>nopticore,jailbreak,</group>
+  </rule>
+
+  <rule id="101039" level="5">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">disk_low</field>
+    <description>Nopticore: disk hampir penuh di $(device_model) -- $(detail)</description>
+    <group>nopticore,resource,</group>
+  </rule>
+
+  <rule id="101040" level="4">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">battery_low</field>
+    <description>Nopticore: baterai rendah di $(device_model) -- $(detail)</description>
+    <group>nopticore,resource,</group>
+  </rule>
+
+  <rule id="101041" level="5">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">swap_high</field>
+    <description>Nopticore: swap usage tinggi di $(device_model) -- $(detail)</description>
+    <group>nopticore,resource,</group>
+  </rule>
+
+  <rule id="101042" level="7">
+    <if_sid>101030</if_sid>
+    <field name="finding_type">root_process_high</field>
+    <description>Nopticore: jumlah proses root tinggi di $(device_model) -- $(detail)</description>
+    <group>nopticore,anomaly,</group>
+  </rule>
+
+</group>
