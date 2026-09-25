@@ -1,6 +1,6 @@
-Taruh file berikut di folder ini (dirujuk dari README utama):
+Files referenced from the main README:
 
-- `dashboard.png` — screenshot dashboard "Nopticore - iOS Device Monitoring" di Wazuh
-- `app-splash.png` — screenshot splash screen companion app
-- `app-status.png` — screenshot tab Status
-- `app-settings.png` — screenshot tab Pengaturan
+- `dashboard.png` — screenshot of the "Nopticore - iOS Device Monitoring" Wazuh dashboard (added)
+- `app-splash.png` — companion app splash screen (pending)
+- `app-status.png` — Status tab (pending)
+- `app-settings.png` — Settings tab (pending)
